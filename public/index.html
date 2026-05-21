@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>台灣天氣預報 - 中央氣象署資料</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <!-- 頂部導覽列 -->
+    <header class="header">
+      <div class="header-content">
+        <h1>🌤️ 台灣天氣預報</h1>
+        <p class="subtitle">資料來源：中央氣象署開放資料</p>
+      </div>
+    </header>
+
+    <!-- 地區選擇 -->
+    <section class="location-selector">
+      <label for="city-select">選擇縣市：</label>
+      <select id="city-select">
+        <option value="">全部縣市</option>
+        <option value="臺北市">臺北市</option>
+        <option value="新北市">新北市</option>
+        <option value="桃園市">桃園市</option>
+        <option value="臺中市">臺中市</option>
+        <option value="臺南市">臺南市</option>
+        <option value="高雄市">高雄市</option>
+        <option value="基隆市">基隆市</option>
+        <option value="新竹縣">新竹縣</option>
+        <option value="新竹市">新竹市</option>
+        <option value="苗栗縣">苗栗縣</option>
+        <option value="彰化縣">彰化縣</option>
+        <option value="南投縣">南投縣</option>
+        <option value="雲林縣">雲林縣</option>
+        <option value="嘉義縣">嘉義縣</option>
+        <option value="嘉義市">嘉義市</option>
+        <option value="屏東縣">屏東縣</option>
+        <option value="宜蘭縣">宜蘭縣</option>
+        <option value="花蓮縣">花蓮縣</option>
+        <option value="臺東縣">臺東縣</option>
+        <option value="澎湖縣">澎湖縣</option>
+        <option value="金門縣">金門縣</option>
+        <option value="連江縣">連江縣</option>
+      </select>
+      <button id="search-btn" class="btn-primary">查詢</button>
+    </section>
+
+    <!-- 頁籤切換 -->
+    <nav class="tabs">
+      <button class="tab active" data-tab="forecast-36hr">36小時預報</button>
+      <button class="tab" data-tab="forecast-week">一週預報</button>
+    </nav>
+
+    <!-- 載入中提示 -->
+    <div id="loading" class="loading hidden">
+      <div class="spinner"></div>
+      <p>載入天氣資料中...</p>
+    </div>
+
+    <!-- 錯誤訊息 -->
+    <div id="error-message" class="error-message hidden"></div>
+
+    <!-- 36小時預報內容 -->
+    <section id="forecast-36hr" class="tab-content active">
+      <div id="forecast-36hr-cards" class="weather-cards"></div>
+    </section>
+
+    <!-- 一週預報內容 -->
+    <section id="forecast-week" class="tab-content">
+      <div id="forecast-week-cards" class="weather-cards"></div>
+    </section>
+
+    <!-- 頁尾 -->
+    <footer class="footer">
+      <p>資料來源：<a href="https://opendata.cwa.gov.tw/" target="_blank" rel="noopener">交通部中央氣象署開放資料平台</a></p>
+      <p>本站僅供參考，實際天氣狀況請以中央氣象署官方公告為準</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
