@@ -3,6 +3,10 @@
  * 資料來源：中央氣象署開放資料平台
  */
 
+const CWA_API_KEY = CWA-B99E63D1-F939-4176-8D01-35287E16C0CE;
+
+
+
 // DOM 元素
 const citySelect = document.getElementById('city-select');
 const searchBtn = document.getElementById('search-btn');
@@ -108,8 +112,88 @@ function formatTime(timeStr) {
 }
 
 /**
- * 取得36小時天氣預報
+ * 取得36小時天氣預報 (修改為直接請求氣象署 API)
  */
+async function fetchForecast36hr(locationName) {
+  try {
+    showLoading(true);
+    hideError();
+
+    // 1. 建立氣象署 36小時天氣預報 (F-C0032-001) 的完整 URL
+    let url = `https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=${CWA_API_KEY}&format=JSON`;
+    
+    // 如果使用者有選擇特定縣市，加上篩選條件
+    if (locationName && locationName !== '全部縣市') {
+      url += `&locationName=${encodeURIComponent(locationName)}`;
+    }
+
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP 錯誤！狀態碼: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    // 2. 解析氣象署回傳的結構，並模擬原本後端傳回的格式 { success: true, data: [...] }
+    if (result.success === 'true' || result.success === true) {
+      // 氣象署的縣市資料陣列位在 records.location
+      const locations = result.records?.location || [];
+      render36hrForecast(locations);
+    } else {
+      showError(result.message || '無法取得天氣資料');
+    }
+  } catch (error) {
+    console.error('取得預報失敗:', error);
+    showError('網路連線失敗，請檢查 API Key 或稍後再試');
+  } finally {
+    showLoading(false);
+  }
+}
+
+/**
+ * 取得一週天氣預報 (修改為直接請求氣象署 API)
+ */
+async function fetchForecastWeek(locationName) {
+  try {
+    showLoading(true);
+    hideError();
+
+    // 1. 建立氣象署 臺灣各縣市未來1週天氣預報 (F-D0047-091) 的完整 URL
+    let url = `https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-D0047-091?Authorization=${CWA_API_KEY}&format=JSON`;
+    
+    if (locationName && locationName !== '全部縣市') {
+      url += `&locationName=${encodeURIComponent(locationName)}`;
+    }
+
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP 錯誤！狀態碼: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    // 2. 解析一週預報的結構
+    // F-D0047-091 回傳的結構是 records.locations[0].location
+    if (result.success === 'true' || result.success === true) {
+      const locationsContainer = result.records?.locations?.[0] || {};
+      const locations = locationsContainer.location || [];
+      renderWeekForecast(locations);
+    } else {
+      showError(result.message || '無法取得一週天氣資料');
+    }
+  } catch (error) {
+    console.error('取得一週預報失敗:', error);
+    showError('網路連線失敗，請檢查 API Key 或稍後再試');
+  } finally {
+    showLoading(false);
+  }
+}
+
+/**
+ * 取得36小時天氣預報
+
 async function fetchForecast36hr(locationName) {
   try {
     showLoading(true);
@@ -136,9 +220,9 @@ async function fetchForecast36hr(locationName) {
   }
 }
 
-/**
+
  * 取得一週天氣預報
- */
+ 
 async function fetchForecastWeek(locationName) {
   try {
     showLoading(true);
@@ -164,6 +248,7 @@ async function fetchForecastWeek(locationName) {
     showLoading(false);
   }
 }
+*/
 
 /**
  * 渲染36小時預報卡片
