@@ -118,7 +118,7 @@ async function fetchForecast36hr(locationName) {
     hideError();
 
     // 1. 建立氣象署 36小時天氣預報 (F-C0032-001) 的完整 URL
-    let url = `https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=${CWA_API_KEY}&format=JSON`;
+    let url = `https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWA-B99E63D1-F939-4176-8D01-35287E16C0CE&format=JSON`;
     
     // 如果使用者有選擇特定縣市，加上篩選條件
     if (locationName && locationName !== '全部縣市') {
@@ -158,7 +158,7 @@ async function fetchForecastWeek(locationName) {
     hideError();
 
     // 1. 建立氣象署 臺灣各縣市未來1週天氣預報 (F-D0047-091) 的完整 URL
-    let url = `https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-D0047-091?Authorization=${CWA_API_KEY}&format=JSON`;
+    let url = `https://opendata.cwa.gov.tw/api/v1/rest/datastore/F-D0047-091?Authorization=CWA-B99E63D1-F939-4176-8D01-35287E16C0CE&format=JSON`;
     
     if (locationName && locationName !== '全部縣市') {
       url += `&locationName=${encodeURIComponent(locationName)}`;
