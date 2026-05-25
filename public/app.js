@@ -305,13 +305,105 @@ function render36hrForecast(locations) {
 }
 
 /**
+ * 渲染一週預報卡片 (相容中央氣象署 F-D0047-091 欄位大小寫版本)
+ */
+function renderWeekForecast(locations) {
+  if (!locations || locations.length === 0) {
+    forecastWeekCards.innerHTML = '<div class="no-data">目前無可用的一週天氣資料</div>';
+    return;
+  }
+
+  forecastWeekCards.innerHTML = locations.map(location => {
+    // 1. 確保正確取得 location 內部的天氣元素與城市名稱（相容大小寫）
+    const elements = location.WeatherElement || location.weatherElement;
+    const cityName = location.LocationName || location.locationName;
+
+    if (!elements || elements.length === 0) {
+      return `
+        <div class="weather-card">
+          <div class="city-name">${cityName}</div>
+          <p>暫無預報資料</p>
+        </div>
+      `;
+    }
+
+    // 2. 修正查找元素邏輯：同時檢查 ElementName 與 elementName
+    const findElement = (name) => elements.find(e => {
+      const currentName = e.ElementName || e.elementName;
+      return currentName === name;
+    });
+
+    const wx = findElement('天氣現象');
+    const minT = findElement('最低溫度');
+    const maxT = findElement('最高溫度');
+    const pop = findElement('12小時降雨機率');
+
+    // 3. 取得時段資料（相容 Time 與 time）
+    const wxTimes = wx?.Time || wx?.time || [];
+    const periods = wxTimes.slice(0, 14); // 一週約 14 個逐 12 小時時段
+
+    if (periods.length === 0) {
+      return `
+        <div class="weather-card">
+          <div class="city-name">${cityName}</div>
+          <p>暫無時段預報資料</p>
+        </div>
+      `;
+    }
+
+    // 4. 迭代每個預報時段並組合 HTML
+    const periodsHtml = periods.map((period, index) => {
+      // 取得當前時段的天氣現象描述
+      const elemValues = period.ElementValue || period.elementValue || [];
+      const weatherDesc = getFirstValue(elemValues) || '無資料';
+      const icon = getWeatherIcon(weatherDesc);
+
+      // 取得對應時段的最低溫與最高溫
+      const minTTimes = minT?.Time || minT?.time || [];
+      const maxTTimes = maxT?.Time || maxT?.time || [];
+      const minEV = minTTimes[index]?.ElementValue || minTTimes[index]?.elementValue || [];
+      const maxEV = maxTTimes[index]?.ElementValue || maxTTimes[index]?.elementValue || [];
+      const min = getFirstValue(minEV) || '-';
+      const max = getFirstValue(maxEV) || '-';
+
+      // 取得對應時段的降雨機率
+      const popTimes = pop?.Time || pop?.time || [];
+      const popEV = popTimes[index]?.ElementValue || popTimes[index]?.elementValue || [];
+      const rain = getFirstValue(popEV) || '-';
+
+      // 取得開始與結束時間
+      const startTime = period.StartTime || period.startTime;
+      const endTime = period.EndTime || period.endTime;
+
+      return `
+        <div class="period-item">
+          <span class="period-time">${formatTime(startTime)} ~ ${formatTime(endTime)}</span>
+          <span class="period-weather">${icon} ${weatherDesc}</span>
+          <span class="period-temp">${min}°C - ${max}°C ${rain !== '-' && rain !== ' ' && rain !== '无' ? '💧' + rain + '%' : ''}</span>
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="weather-card">
+        <div class="city-name">${cityName}</div>
+        <div class="week-forecast-periods">
+          ${periodsHtml}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+
+/**
  * 渲染一週預報卡片
  * F-D0047-091 API 實際回傳結構：
  * Location[].WeatherElement[].Time[].ElementValue[{ key: value }]
  * 
  * WeatherElement 名稱為中文：天氣現象、最高溫度、最低溫度、12小時降雨機率 等
  * ElementValue 為物件陣列，key 為具體名稱如 Temperature、Weather 等
- */
+
 function renderWeekForecast(locations) {
   if (!locations || locations.length === 0) {
     forecastWeekCards.innerHTML = '<div class="no-data">目前無可用的一週天氣資料</div>';
@@ -396,6 +488,7 @@ function renderWeekForecast(locations) {
     `;
   }).join('');
 }
+*/
 
 /**
  * 頁籤切換
