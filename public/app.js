@@ -3,9 +3,7 @@
  * 資料來源：中央氣象署開放資料平台
  */
 
-const CWA_API_KEY = CWA-B99E63D1-F939-4176-8D01-35287E16C0CE;
-
-
+const CWA_API_KEY = 'CWA-B99E63D1-F939-4176-8D01-35287E16C0CE';
 
 // DOM 元素
 const citySelect = document.getElementById('city-select');
